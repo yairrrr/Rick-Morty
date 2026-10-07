@@ -6,6 +6,7 @@
   --border: #e5e4e7;
   --accent: #2f9e44;
   --accent-bg: rgba(47, 158, 68, 0.1);
+  --error: #c92a2a;
 
   font: 16px/1.5 system-ui, 'Segoe UI', Roboto, sans-serif;
   color-scheme: light dark;
@@ -23,6 +24,7 @@
     --border: #2e303a;
     --accent: #69db7c;
     --accent-bg: rgba(105, 219, 124, 0.12);
+    --error: #ff8787;
   }
 }
 
@@ -84,6 +86,19 @@ h1 {
 
 .character-card img {
   border-radius: 8px;
+}
+
+.status {
+  margin: 0;
+  padding: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.status-error {
+  color: var(--error);
+  border-color: var(--error);
 }
 
 .details-panel {

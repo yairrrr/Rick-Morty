@@ -26,3 +26,8 @@ I checked: Ran `npm run dev`, opened localhost:5173 and saw 5 cards, each with a
 Prompt: Task 2 from `tasks.md`: add the details panel on the right. Clicking a card shows the character's large picture, name, species, and number of episodes. Before any click, the panel shows "Pick a character to see details". Mark the selected card so it stands out.
 Agent did: Created `src/components/CharacterDetails.tsx`. Changed `src/components/CharacterList.tsx` so each card is a button that reports clicks and highlights the selected card. Changed `src/App.tsx` to remember the selected character and show the details panel. Added details panel and selected-card styles to `src/index.css`. Checked that `npm run build` and `npm run lint` pass.
 I checked: (fill in, e.g. "Saw the 'Pick a character' message, clicked Morty and saw his details and a highlighted card.")
+
+## Task 3 — load the first 20 characters from the API
+Prompt: Task 3 from `tasks.md`: replace the sample JSON with data from https://rickandmortyapi.com/api/character. Show "Loading..." while waiting and an error message if the request fails.
+Agent did: Created `src/api.ts` with a `fetchCharacters` function. Changed `src/App.tsx` to load the characters when the app opens and show "Loading...", an error message, or the list. Added status and error styles to `src/index.css`. Kept `src/data/characters.json` for now (Task 8 removes it). Checked that `npm run build` and `npm run lint` pass, and that the API returns 20 characters starting with Rick Sanchez.
+I checked: (fill in, e.g. "Saw 'Loading...', then 20 characters starting with Rick Sanchez. Turned off Wi-Fi, reloaded and saw the error message.")
