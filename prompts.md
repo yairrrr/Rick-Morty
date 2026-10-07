@@ -41,3 +41,8 @@ I checked: (fill in, e.g. "Clicked 'Load more' and the list grew from 20 to 40; 
 Prompt: Task 5 from `tasks.md`: add a search box above the list. Typing a name fetches matching characters from the API and replaces the list with the results. Clearing the box brings back the full list.
 Agent did: Changed `src/api.ts` to build the search URL (`?name=...`). Changed `src/App.tsx` to add the search box, wait 300 ms after the last keystroke and then fetch the matching characters, cancel an older search when a new one starts, and keep the selected character's details when a search hides it from the list. Changed `src/components/CharacterDetails.tsx` to accept "no character" as `null`. Added search box styles to `src/index.css`. Checked that `npm run build` and `npm run lint` pass, and that searching "rick" in the API returns 107 characters.
 I checked: (fill in, e.g. "Typed 'Rick' and saw only Ricks; cleared the box and saw the full list again.")
+
+## Task 6 — handle searches with no results
+Prompt: Task 6 from `tasks.md`: when a search finds nothing, the API returns an error instead of an empty list. Show "No characters found" instead of the error message.
+Agent did: Changed `src/api.ts` so a 404 answer from the API counts as an empty list instead of an error. Changed `src/App.tsx` to show "No characters found" when the list is empty. Checked that `npm run build` and `npm run lint` pass, and that the API answers 404 for the search "zzzz".
+I checked: (fill in, e.g. "Typed 'zzzz' and saw 'No characters found'; cleared the box and the full list came back.")

@@ -85,6 +85,8 @@ function App() {
         Could not load characters. {error}
       </p>
     )
+  } else if (characters.length === 0) {
+    listContent = <p className="status">No characters found</p>
   } else {
     listContent = (
       <>

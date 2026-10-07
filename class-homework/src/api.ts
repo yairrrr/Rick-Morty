@@ -18,6 +18,10 @@ export async function fetchCharacters(
   signal?: AbortSignal,
 ): Promise<CharacterPage> {
   const response = await fetch(url, { signal })
+  // A search with no matches answers 404 instead of an empty list
+  if (response.status === 404) {
+    return { info: { next: null }, results: [] }
+  }
   if (!response.ok) {
     throw new Error(`Request failed with status ${response.status}`)
   }
