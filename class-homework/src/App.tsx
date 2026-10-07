@@ -26,6 +26,7 @@ function App() {
   const searchName = query.trim()
   // Lets a new search cancel a "Load more" that is still loading
   const loadMoreController = useRef<AbortController | null>(null)
+  const detailsRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     // Cancels the request if the search changes before it finishes
@@ -62,6 +63,10 @@ function App() {
 
   function handleSelect(id: number) {
     setSelectedCharacter(characters.find((c) => c.id === id) ?? null)
+    // On phones the details sit below the list, so bring them into view
+    if (window.matchMedia('(max-width: 640px)').matches) {
+      detailsRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
   }
 
   async function handleLoadMore() {
@@ -138,7 +143,7 @@ function App() {
           />
           {listContent}
         </section>
-        <section className="details-panel">
+        <section className="details-panel" ref={detailsRef}>
           <CharacterDetails character={selectedCharacter} />
         </section>
       </main>

@@ -51,3 +51,8 @@ I checked: (fill in, e.g. "Typed 'zzzz' and saw 'No characters found'; cleared t
 Prompt: Task 7 from `tasks.md`: make "Load more" fetch the next page of the current search, not the next page of all characters.
 Agent did: Found that "Load more" already follows the search, because the API's next-page link includes the name (`?page=2&name=rick`). Fixed one bug in `src/App.tsx`: if the search changed while "Load more" was still loading, the old search's characters were added to the new list. Now a new search cancels that request. Checked that `npm run build` and `npm run lint` pass, and that page 2 of the "rick" search has 20 characters, all with "Rick" in the name.
 I checked: (fill in, e.g. "Searched 'Rick', clicked 'Load more' and saw 40 Ricks and no other characters.")
+
+## Task 8 — final check and cleanup
+Prompt: Task 8 from `tasks.md`: go through every acceptance criterion in PRD.md and confirm it works. Remove the sample JSON file if nothing uses it anymore, and tidy up the layout and spacing.
+Agent did: Deleted `src/data/characters.json` (nothing used it). Ran a scripted browser check of all 5 acceptance criteria and a phone-size screen. The check found two problems and the agent fixed them: (1) the API blocks the app for about 10 seconds after roughly 30 requests (pictures count too), so opening the app, searching and clicking "Load more" quickly made "Load more" fail. `src/api.ts` now waits 12 seconds and tries once more, and `src/components/CharacterList.tsx` loads list pictures lazily. (2) On a phone, the details appeared far below the list after a click. `src/App.tsx` now scrolls to the details on small screens. Checked that `npm run build` and `npm run lint` pass.
+I checked: (fill in after testing the 5 acceptance criteria by hand.)

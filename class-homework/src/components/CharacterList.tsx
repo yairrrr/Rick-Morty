@@ -17,7 +17,13 @@ function CharacterList({ characters, selectedId, onSelect }: Props) {
             aria-pressed={character.id === selectedId}
             onClick={() => onSelect(character.id)}
           >
-            <img src={character.image} alt="" width="56" height="56" />
+            <img
+              src={character.image}
+              alt=""
+              width="56"
+              height="56"
+              loading="lazy"
+            />
             <span>{character.name}</span>
           </button>
         </li>
