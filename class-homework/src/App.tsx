@@ -15,6 +15,7 @@ function App() {
   const [query, setQuery] = useState('')
   const [characters, setCharacters] = useState<Character[]>([])
   const [nextUrl, setNextUrl] = useState<string | null>(null)
+  const [totalCount, setTotalCount] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -42,6 +43,7 @@ function App() {
           .then((page) => {
             setCharacters(page.results)
             setNextUrl(page.info.next)
+            setTotalCount(page.info.count)
           })
           .catch((err: unknown) => {
             if (controller.signal.aborted) return
@@ -102,6 +104,7 @@ function App() {
   } else {
     listContent = (
       <>
+        <p className="result-count">{totalCount} characters found</p>
         <CharacterList
           characters={characters}
           selectedId={selectedCharacter?.id ?? null}

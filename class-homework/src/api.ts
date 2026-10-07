@@ -9,7 +9,7 @@ export function firstPageUrl(name: string) {
 
 // The API returns one page of 20 characters plus a link to the next page
 type CharacterPage = {
-  info: { next: string | null }
+  info: { count: number; next: string | null }
   results: Character[]
 }
 
@@ -46,7 +46,7 @@ export async function fetchCharacters(
   }
   // A search with no matches answers 404 instead of an empty list
   if (response.status === 404) {
-    return { info: { next: null }, results: [] }
+    return { info: { count: 0, next: null }, results: [] }
   }
   if (!response.ok) {
     throw new Error(`Request failed with status ${response.status}`)

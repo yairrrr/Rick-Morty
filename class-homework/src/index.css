@@ -121,6 +121,11 @@ h1 {
   outline-offset: 1px;
 }
 
+.result-count {
+  margin: 0;
+  font-size: 14px;
+}
+
 .load-more {
   padding: 10px 16px;
   background: var(--accent);
