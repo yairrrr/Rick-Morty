@@ -1,6 +1,11 @@
 import type { Character } from './types'
 
-export const FIRST_PAGE_URL = 'https://rickandmortyapi.com/api/character'
+const BASE_URL = 'https://rickandmortyapi.com/api/character'
+
+// The first page of characters, or of characters whose name includes `name`
+export function firstPageUrl(name: string) {
+  return name ? `${BASE_URL}?name=${encodeURIComponent(name)}` : BASE_URL
+}
 
 // The API returns one page of 20 characters plus a link to the next page
 type CharacterPage = {

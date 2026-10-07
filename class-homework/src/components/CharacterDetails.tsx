@@ -1,7 +1,7 @@
 import type { Character } from '../types'
 
 type Props = {
-  character: Character | undefined
+  character: Character | null
 }
 
 function CharacterDetails({ character }: Props) {

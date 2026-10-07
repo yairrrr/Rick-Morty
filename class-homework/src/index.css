@@ -107,6 +107,20 @@ h1 {
   gap: 12px;
 }
 
+.search {
+  padding: 10px 12px;
+  background: var(--card-bg);
+  color: var(--text-h);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font: inherit;
+}
+
+.search:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
 .load-more {
   padding: 10px 16px;
   background: var(--accent);

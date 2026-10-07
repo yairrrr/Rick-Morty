@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { FIRST_PAGE_URL, fetchCharacters } from './api'
+import { fetchCharacters, firstPageUrl } from './api'
 import CharacterDetails from './components/CharacterDetails'
 import CharacterList from './components/CharacterList'
 import type { Character } from './types'
@@ -8,35 +8,58 @@ function errorMessage(err: unknown) {
   return err instanceof Error ? err.message : 'Something went wrong'
 }
 
+// Wait this long after the last keystroke before searching
+const SEARCH_DELAY_MS = 300
+
 function App() {
+  const [query, setQuery] = useState('')
   const [characters, setCharacters] = useState<Character[]>([])
   const [nextUrl, setNextUrl] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loadMoreError, setLoadMoreError] = useState<string | null>(null)
-  const [selectedId, setSelectedId] = useState<number | null>(null)
-  const selectedCharacter = characters.find((c) => c.id === selectedId)
+  // Kept as the whole character so the details stay when a search hides it
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(
+    null,
+  )
+  const searchName = query.trim()
 
   useEffect(() => {
-    // Cancels the request if the component unmounts before it finishes
+    // Cancels the request if the search changes before it finishes
     const controller = new AbortController()
 
-    fetchCharacters(FIRST_PAGE_URL, controller.signal)
-      .then((page) => {
-        setCharacters(page.results)
-        setNextUrl(page.info.next)
-      })
-      .catch((err: unknown) => {
-        if (controller.signal.aborted) return
-        setError(errorMessage(err))
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setIsLoading(false)
-      })
+    const timer = setTimeout(
+      () => {
+        setIsLoading(true)
+        setError(null)
+        setLoadMoreError(null)
 
-    return () => controller.abort()
-  }, [])
+        fetchCharacters(firstPageUrl(searchName), controller.signal)
+          .then((page) => {
+            setCharacters(page.results)
+            setNextUrl(page.info.next)
+          })
+          .catch((err: unknown) => {
+            if (controller.signal.aborted) return
+            setError(errorMessage(err))
+          })
+          .finally(() => {
+            if (!controller.signal.aborted) setIsLoading(false)
+          })
+      },
+      searchName ? SEARCH_DELAY_MS : 0,
+    )
+
+    return () => {
+      clearTimeout(timer)
+      controller.abort()
+    }
+  }, [searchName])
+
+  function handleSelect(id: number) {
+    setSelectedCharacter(characters.find((c) => c.id === id) ?? null)
+  }
 
   async function handleLoadMore() {
     if (!nextUrl) return
@@ -67,8 +90,8 @@ function App() {
       <>
         <CharacterList
           characters={characters}
-          selectedId={selectedId}
-          onSelect={setSelectedId}
+          selectedId={selectedCharacter?.id ?? null}
+          onSelect={handleSelect}
         />
         {loadMoreError && (
           <p className="status status-error" role="alert">
@@ -95,7 +118,17 @@ function App() {
         <h1>Rick and Morty Characters</h1>
       </header>
       <main className="layout">
-        <section className="list-panel">{listContent}</section>
+        <section className="list-panel">
+          <input
+            type="search"
+            className="search"
+            placeholder="Search by name"
+            aria-label="Search characters by name"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          {listContent}
+        </section>
         <section className="details-panel">
           <CharacterDetails character={selectedCharacter} />
         </section>
