@@ -46,3 +46,8 @@ I checked: (fill in, e.g. "Typed 'Rick' and saw only Ricks; cleared the box and 
 Prompt: Task 6 from `tasks.md`: when a search finds nothing, the API returns an error instead of an empty list. Show "No characters found" instead of the error message.
 Agent did: Changed `src/api.ts` so a 404 answer from the API counts as an empty list instead of an error. Changed `src/App.tsx` to show "No characters found" when the list is empty. Checked that `npm run build` and `npm run lint` pass, and that the API answers 404 for the search "zzzz".
 I checked: (fill in, e.g. "Typed 'zzzz' and saw 'No characters found'; cleared the box and the full list came back.")
+
+## Task 7 — "Load more" works on search results
+Prompt: Task 7 from `tasks.md`: make "Load more" fetch the next page of the current search, not the next page of all characters.
+Agent did: Found that "Load more" already follows the search, because the API's next-page link includes the name (`?page=2&name=rick`). Fixed one bug in `src/App.tsx`: if the search changed while "Load more" was still loading, the old search's characters were added to the new list. Now a new search cancels that request. Checked that `npm run build` and `npm run lint` pass, and that page 2 of the "rick" search has 20 characters, all with "Rick" in the name.
+I checked: (fill in, e.g. "Searched 'Rick', clicked 'Load more' and saw 40 Ricks and no other characters.")

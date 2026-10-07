@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { fetchCharacters, firstPageUrl } from './api'
 import CharacterDetails from './components/CharacterDetails'
 import CharacterList from './components/CharacterList'
@@ -24,6 +24,8 @@ function App() {
     null,
   )
   const searchName = query.trim()
+  // Lets a new search cancel a "Load more" that is still loading
+  const loadMoreController = useRef<AbortController | null>(null)
 
   useEffect(() => {
     // Cancels the request if the search changes before it finishes
@@ -54,6 +56,7 @@ function App() {
     return () => {
       clearTimeout(timer)
       controller.abort()
+      loadMoreController.current?.abort()
     }
   }, [searchName])
 
@@ -62,14 +65,18 @@ function App() {
   }
 
   async function handleLoadMore() {
+    // nextUrl already holds the search, e.g. ?page=2&name=rick
     if (!nextUrl) return
+    const controller = new AbortController()
+    loadMoreController.current = controller
     setIsLoadingMore(true)
     setLoadMoreError(null)
     try {
-      const page = await fetchCharacters(nextUrl)
+      const page = await fetchCharacters(nextUrl, controller.signal)
       setCharacters((current) => [...current, ...page.results])
       setNextUrl(page.info.next)
     } catch (err) {
+      if (controller.signal.aborted) return
       setLoadMoreError(errorMessage(err))
     } finally {
       setIsLoadingMore(false)
