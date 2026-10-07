@@ -101,6 +101,32 @@ h1 {
   border-color: var(--error);
 }
 
+.list-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.load-more {
+  padding: 10px 16px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.load-more:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.load-more:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
 .details-panel {
   align-self: start;
   position: sticky;

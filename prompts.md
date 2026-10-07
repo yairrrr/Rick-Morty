@@ -31,3 +31,8 @@ I checked: (fill in, e.g. "Saw the 'Pick a character' message, clicked Morty and
 Prompt: Task 3 from `tasks.md`: replace the sample JSON with data from https://rickandmortyapi.com/api/character. Show "Loading..." while waiting and an error message if the request fails.
 Agent did: Created `src/api.ts` with a `fetchCharacters` function. Changed `src/App.tsx` to load the characters when the app opens and show "Loading...", an error message, or the list. Added status and error styles to `src/index.css`. Kept `src/data/characters.json` for now (Task 8 removes it). Checked that `npm run build` and `npm run lint` pass, and that the API returns 20 characters starting with Rick Sanchez.
 I checked: (fill in, e.g. "Saw 'Loading...', then 20 characters starting with Rick Sanchez. Turned off Wi-Fi, reloaded and saw the error message.")
+
+## Task 4 — add the "Load more" button
+Prompt: Task 4 from `tasks.md`: add a "Load more" button at the bottom of the list. Each click fetches the next page and adds its 20 characters below the ones already shown. Hide the button when there are no more pages.
+Agent did: Changed `src/api.ts` so `fetchCharacters` takes the page URL and returns the link to the next page. Changed `src/App.tsx` to remember the next page link, add the new characters to the end of the list on each click, show "Loading..." on the button while waiting, show an error if loading more fails, and hide the button when there is no next page. Added button styles to `src/index.css`. Checked that `npm run build` and `npm run lint` pass, and that the API's page 2 starts with character 21.
+I checked: (fill in, e.g. "Clicked 'Load more' and the list grew from 20 to 40; Rick Sanchez was still first.")
