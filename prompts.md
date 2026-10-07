@@ -20,4 +20,9 @@ I checked: (fill in after running the commands, e.g. "Ran the commands and saw t
 ## Task 1 — show the list
 Prompt: Task 1 from `tasks.md`: create the React project, save 5 sample characters in a local JSON file with the real API's fields (`id`, `name`, `image`, `species`, `episode`), and show them as a list on the left. Each card shows a small picture and the name.
 Agent did: Used the existing Vite + React + TypeScript project in `class-homework/`. Created `src/data/characters.json` (the first 5 real characters from the API), `src/types.ts` (the `Character` type), and `src/components/CharacterList.tsx`. Replaced `src/App.tsx` and `src/index.css` with the app layout and styles, and changed the page title in `index.html`. Removed the unused Vite template files (`App.css`, `src/assets/`, `public/icons.svg`). Checked that `npm run build` and `npm run lint` pass.
-I checked: I checked
+I checked: Ran `npm run dev`, opened localhost:5173 and saw 5 cards, each with a picture and a name.
+
+## Task 2 — click a character to show its details
+Prompt: Task 2 from `tasks.md`: add the details panel on the right. Clicking a card shows the character's large picture, name, species, and number of episodes. Before any click, the panel shows "Pick a character to see details". Mark the selected card so it stands out.
+Agent did: Created `src/components/CharacterDetails.tsx`. Changed `src/components/CharacterList.tsx` so each card is a button that reports clicks and highlights the selected card. Changed `src/App.tsx` to remember the selected character and show the details panel. Added details panel and selected-card styles to `src/index.css`. Checked that `npm run build` and `npm run lint` pass.
+I checked: (fill in, e.g. "Saw the 'Pick a character' message, clicked Morty and saw his details and a highlighted card.")

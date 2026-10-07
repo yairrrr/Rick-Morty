@@ -5,6 +5,7 @@
   --card-bg: #fff;
   --border: #e5e4e7;
   --accent: #2f9e44;
+  --accent-bg: rgba(47, 158, 68, 0.1);
 
   font: 16px/1.5 system-ui, 'Segoe UI', Roboto, sans-serif;
   color-scheme: light dark;
@@ -21,6 +22,7 @@
     --card-bg: #1f2028;
     --border: #2e303a;
     --accent: #69db7c;
+    --accent-bg: rgba(105, 219, 124, 0.12);
   }
 }
 
@@ -59,19 +61,81 @@ h1 {
   display: flex;
   align-items: center;
   gap: 12px;
+  width: 100%;
   padding: 8px;
   background: var(--card-bg);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: 10px;
   color: var(--text-h);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.character-card:hover {
+  border-color: var(--accent);
+}
+
+.character-card[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  font-weight: 600;
 }
 
 .character-card img {
   border-radius: 8px;
 }
 
+.details-panel {
+  align-self: start;
+  position: sticky;
+  top: 24px;
+  padding: 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.details-empty {
+  margin: 0;
+  padding: 48px 0;
+  text-align: center;
+}
+
+.character-details img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+.character-details h2 {
+  margin: 16px 0 8px;
+  color: var(--text-h);
+}
+
+.character-details dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 16px;
+  margin: 0;
+}
+
+.character-details dt {
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.character-details dd {
+  margin: 0;
+}
+
 @media (max-width: 640px) {
   .layout {
     grid-template-columns: 1fr;
+  }
+
+  .details-panel {
+    position: static;
   }
 }
