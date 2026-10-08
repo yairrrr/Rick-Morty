@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { fetchCharacters, firstPageUrl } from '../api'
 import CharacterDetails from '../components/CharacterDetails'
 import CharacterList from '../components/CharacterList'
-import CharacterVideo from '../components/CharacterVideo'
 import { useFavorites } from '../favorites'
 import type { Character } from '../types'
 
@@ -79,7 +78,7 @@ function CharactersPage() {
   function handleSelect(id: number) {
     const shown = showFavorites ? shownFavorites : characters
     setSelectedCharacter(shown.find((c) => c.id === id) ?? null)
-    // Bring the details and the video into view: on phones they sit below
+    // Bring the details into view: on phones they sit below
     // the list, on laptops the panel is still below the logo until it sticks
     const panel = detailsRef.current
     if (
@@ -203,12 +202,6 @@ function CharactersPage() {
           isFavorite={selectedCharacter ? isFavorite(selectedCharacter.id) : false}
           onToggleFavorite={toggleFavorite}
         />
-        {selectedCharacter && (
-          <CharacterVideo
-            key={selectedCharacter.id}
-            name={selectedCharacter.name}
-          />
-        )}
       </section>
     </div>
   )

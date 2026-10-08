@@ -3,6 +3,7 @@ import Layout from './components/Layout'
 import AboutPage from './pages/AboutPage'
 import CharactersPage from './pages/CharactersPage'
 import EpisodesPage from './pages/EpisodesPage'
+import MultiversePage from './pages/MultiversePage'
 import NotFoundPage from './pages/NotFoundPage'
 
 // Which page shows at which address. All pages sit inside Layout.
@@ -12,6 +13,7 @@ function App() {
       <Route element={<Layout />}>
         <Route index element={<CharactersPage />} />
         <Route path="episodes" element={<EpisodesPage />} />
+        <Route path="multiverse" element={<MultiversePage />} />
         <Route path="about" element={<AboutPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>

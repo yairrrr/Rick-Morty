@@ -24,6 +24,7 @@ function Layout() {
             Characters
           </NavLink>
           <NavLink to="/episodes">Episodes</NavLink>
+          <NavLink to="/multiverse">Multiverse</NavLink>
           <NavLink to="/about">About</NavLink>
         </nav>
       </header>

@@ -23,7 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-# API keys
+# Secrets (API keys, passwords)
 .env
 .env.*
-!.env.example

@@ -32,18 +32,22 @@ function wait(ms: number, signal?: AbortSignal) {
   })
 }
 
+// Any request to the Rick and Morty API (characters, locations...)
+export async function fetchWithRetry(url: string, signal?: AbortSignal) {
+  try {
+    return await fetch(url, { signal })
+  } catch (err) {
+    if (signal?.aborted) throw err
+    await wait(RETRY_DELAY_MS, signal)
+    return fetch(url, { signal })
+  }
+}
+
 export async function fetchCharacters(
   url: string,
   signal?: AbortSignal,
 ): Promise<CharacterPage> {
-  let response: Response
-  try {
-    response = await fetch(url, { signal })
-  } catch (err) {
-    if (signal?.aborted) throw err
-    await wait(RETRY_DELAY_MS, signal)
-    response = await fetch(url, { signal })
-  }
+  const response = await fetchWithRetry(url, signal)
   // A search with no matches answers 404 instead of an empty list
   if (response.status === 404) {
     return { info: { count: 0, next: null }, results: [] }

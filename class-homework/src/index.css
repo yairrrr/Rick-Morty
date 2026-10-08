@@ -93,10 +93,10 @@ body::before {
 }
 
 .main-nav a {
-  padding: 8px 16px;
+  padding: 7px 10px;
   border-radius: 999px;
   font-family: var(--font-title);
-  font-size: 19px;
+  font-size: 17px;
   letter-spacing: 1px;
   color: var(--text);
   text-decoration: none;
@@ -650,84 +650,6 @@ h1 {
   height: 46px;
 }
 
-/* ---------- YouTube video under the details ---------- */
-
-.character-video {
-  margin-top: 20px;
-  padding-top: 18px;
-  border-top: 2px dashed var(--line);
-  text-align: center;
-}
-
-.character-video h3 {
-  margin: 0 0 12px;
-  font-family: var(--font-title);
-  font-size: 20px;
-  font-weight: 400;
-  letter-spacing: 1px;
-  color: var(--morty);
-  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.6);
-}
-
-.video-frame {
-  position: relative;
-  width: 100%;
-  max-width: 420px;
-  margin: 0 auto;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  border: 3px solid var(--rick);
-  border-radius: 16px;
-  background: #000;
-  box-shadow: 0 0 24px rgba(68, 200, 228, 0.35);
-  animation: video-pop 0.35s ease-out;
-}
-
-.video-frame iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-
-.video-loading {
-  display: grid;
-  place-items: center;
-  font-family: var(--font-title);
-  font-size: 20px;
-  letter-spacing: 1px;
-  color: var(--portal-bright);
-  background: radial-gradient(circle, rgba(151, 206, 76, 0.25), #05070f 70%);
-}
-
-@keyframes video-pop {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-}
-
-.video-link {
-  display: inline-block;
-  padding: 10px 20px;
-  font-weight: 600;
-  color: #fff;
-  text-decoration: none;
-  background: #c4302b;
-  border-radius: 999px;
-  box-shadow: 0 4px 0 #10162e;
-}
-
-.video-link:hover {
-  filter: brightness(1.1);
-}
-
-.video-link:focus-visible {
-  outline: 3px solid var(--rick);
-  outline-offset: 3px;
-}
-
 /* ---------- Episodes page ---------- */
 
 .season-tabs {
@@ -1069,7 +991,7 @@ a.load-more {
   }
 
   .feature-list {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -1085,24 +1007,19 @@ a.load-more {
   .details-panel {
     position: sticky;
     top: 24px;
-    /* With the video the panel can be taller than the screen */
+    /* With all the facts the panel can be taller than the screen */
     max-height: calc(100vh - 48px);
     overflow-y: auto;
     scrollbar-width: thin;
   }
 
-  /* Smaller picture so the video fits on a laptop screen */
+  /* Smaller picture so the facts fit on a laptop screen */
   .details-image {
     width: min(100%, 200px);
   }
 
   .character-details h2 {
     margin: 12px 0 10px;
-  }
-
-  .character-video {
-    margin-top: 16px;
-    padding-top: 14px;
   }
 }
 
@@ -1126,8 +1043,7 @@ a.load-more {
 
 @media (prefers-reduced-motion: reduce) {
   .logo,
-  .portal,
-  .video-frame {
+  .portal {
     animation: none;
   }
 

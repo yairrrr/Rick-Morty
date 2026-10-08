@@ -3,15 +3,15 @@ import { Link } from 'react-router'
 const FEATURES = [
   {
     title: 'Every character',
-    text: 'Browse all 800+ characters, search by name, and click one to see its species and episode count.',
-  },
-  {
-    title: 'A video for each one',
-    text: 'Clicking a character finds a short YouTube video about it and plays it under the details.',
+    text: 'Browse all 800+ characters, search by name, and click one to see its facts, and keep your favorites.',
   },
   {
     title: 'Every episode',
     text: 'All the episodes season by season, each with a picture and a short summary.',
+  },
+  {
+    title: 'The multiverse',
+    text: 'Jump between dimensions, explore their planets and meet who lives on each one.',
   },
 ]
 
@@ -19,17 +19,12 @@ const SOURCES = [
   {
     name: 'The Rick and Morty API',
     url: 'https://rickandmortyapi.com',
-    what: 'Characters, pictures and species',
+    what: 'Characters, pictures, locations and dimensions',
   },
   {
     name: 'TVMaze API',
     url: 'https://www.tvmaze.com/api',
     what: 'Episode pictures and summaries',
-  },
-  {
-    name: 'YouTube Data API',
-    url: 'https://developers.google.com/youtube/v3',
-    what: 'Short videos about the characters',
   },
 ]
 

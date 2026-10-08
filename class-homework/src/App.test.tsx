@@ -1,8 +1,9 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
+import { clearLocationsCache, type Location } from './locations'
 import type { Character } from './types'
 
 const API = 'https://rickandmortyapi.com/api/character'
@@ -163,52 +164,6 @@ describe('New feature: number of results', () => {
   })
 })
 
-describe('New feature: YouTube video about the character', () => {
-  function fakeApiWithYoutube(url: string) {
-    if (url.startsWith('https://www.googleapis.com/youtube/v3/search')) {
-      return new Response(
-        JSON.stringify({ items: [{ id: { videoId: 'abc123' } }] }),
-      )
-    }
-    return fakeApi(url)
-  }
-
-  beforeEach(() => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(async (url: string) => fakeApiWithYoutube(url)),
-    )
-  })
-
-  afterEach(() => {
-    vi.unstubAllEnvs()
-  })
-
-  it('When I click a character, I see a YouTube video about it under the details', async () => {
-    vi.stubEnv('VITE_YOUTUBE_API_KEY', 'test-key')
-    const user = userEvent.setup()
-    renderApp()
-    await user.click(await screen.findByText('Morty Smith'))
-
-    const video = await screen.findByTitle('YouTube video about Morty Smith')
-    expect(video).toHaveAttribute(
-      'src',
-      expect.stringContaining('/embed/abc123'),
-    )
-  })
-
-  it('Without an API key, I see a link to search YouTube instead', async () => {
-    vi.stubEnv('VITE_YOUTUBE_API_KEY', '')
-    const user = userEvent.setup()
-    renderApp()
-    await user.click(await screen.findByText('Morty Smith'))
-
-    expect(
-      screen.getByRole('link', { name: 'Search YouTube for Morty Smith' }),
-    ).toHaveAttribute('href', expect.stringContaining('youtube.com/results'))
-  })
-})
-
 describe('New feature: Episodes and About pages', () => {
   const episode = (id: number, season: number, number: number, name: string) => ({
     id,
@@ -348,5 +303,158 @@ describe('New feature: favorites', () => {
     await user.click(screen.getByRole('button', { name: 'Favorites (0)' }))
 
     expect(screen.getByText(/No favorites yet/)).toBeInTheDocument()
+  })
+})
+
+describe('New feature: Multiverse page', () => {
+  const LOCATIONS = 'https://rickandmortyapi.com/api/location'
+  const location = (
+    id: number,
+    name: string,
+    type: string,
+    dimension: string,
+    residentIds: number[] = [],
+  ): Location => ({
+    id,
+    name,
+    type,
+    dimension,
+    residents: residentIds.map((r) => `${API}/${r}`),
+  })
+
+  // Two pages, like the real API (which has seven)
+  const page1 = [
+    location(1, 'Earth (C-137)', 'Planet', 'Dimension C-137', [1, 2]),
+    location(3, 'Citadel of Ricks', 'Space station', 'unknown', [1]),
+  ]
+  const page2 = [
+    location(5, 'Anatomy Park', 'Microverse', 'Dimension C-137'),
+    location(20, 'Earth (Replacement Dimension)', 'Planet', 'Replacement Dimension'),
+  ]
+
+  let fetchMock: ReturnType<typeof vi.fn>
+
+  beforeEach(() => {
+    clearLocationsCache()
+    fetchMock = vi.fn(async (url: string) => {
+      if (url === LOCATIONS) {
+        return new Response(JSON.stringify({ info: { pages: 2 }, results: page1 }))
+      }
+      if (url === `${LOCATIONS}?page=2`) {
+        return new Response(JSON.stringify({ info: { pages: 2 }, results: page2 }))
+      }
+      if (url === `${API}/1,2`) {
+        return new Response(
+          JSON.stringify([allPage1[0], allPage1[1]]),
+        )
+      }
+      return fakeApi(url)
+    })
+    vi.stubGlobal('fetch', fetchMock)
+  })
+
+  const locationRequests = () =>
+    fetchMock.mock.calls.filter(([url]) => String(url).startsWith(LOCATIONS))
+
+  it('When I click "Multiverse" in the menu, I see a portal for each dimension', async () => {
+    const user = userEvent.setup()
+    renderApp()
+    await user.click(screen.getByRole('link', { name: 'Multiverse' }))
+
+    const dimensions = await screen.findByRole('list', { name: 'Dimensions' })
+    const names = within(dimensions)
+      .getAllByRole('button')
+      .map((b) => b.textContent)
+    expect(names).toEqual([
+      'Dimension C-137' + '2 locations',
+      'Replacement Dimension' + '1 location',
+      'Unknown dimension' + '1 location',
+    ])
+  })
+
+  it('When I pick a dimension, I see only its planets', async () => {
+    const user = userEvent.setup()
+    renderApp('/multiverse')
+    await user.click(await screen.findByRole('button', { name: /Dimension C-137/ }))
+
+    const map = screen.getByRole('list', { name: 'Locations' })
+    expect(within(map).getByRole('button', { name: 'Earth (C-137)' })).toBeInTheDocument()
+    expect(within(map).getByRole('button', { name: 'Anatomy Park' })).toBeInTheDocument()
+    expect(within(map).queryByRole('button', { name: 'Citadel of Ricks' })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: '← All dimensions' }))
+    expect(screen.getByRole('list', { name: 'Dimensions' })).toBeInTheDocument()
+  })
+
+  it('When I search "citadel", I see only the Citadel of Ricks', async () => {
+    const user = userEvent.setup()
+    renderApp('/multiverse')
+    await screen.findByRole('list', { name: 'Dimensions' })
+    await user.type(screen.getByRole('searchbox'), 'citadel')
+
+    const map = screen.getByRole('list', { name: 'Locations' })
+    expect(within(map).getAllByRole('button').map((b) => b.getAttribute('aria-label'))).toEqual(['Citadel of Ricks'])
+  })
+
+  it('When I choose a dimension in the filter, I see its locations', async () => {
+    const user = userEvent.setup()
+    renderApp('/multiverse')
+    await screen.findByRole('list', { name: 'Dimensions' })
+    await user.click(screen.getByRole('combobox', { name: 'Dimension' }))
+    await user.click(
+      screen.getByRole('option', { name: /Replacement Dimension/ }),
+    )
+
+    const map = screen.getByRole('list', { name: 'Locations' })
+    expect(within(map).getAllByRole('button').map((b) => b.getAttribute('aria-label'))).toEqual([
+      'Earth (Replacement Dimension)',
+    ])
+  })
+
+  it('With the keyboard, I can choose a dimension in the filter', async () => {
+    const user = userEvent.setup()
+    renderApp('/multiverse')
+    await screen.findByRole('list', { name: 'Dimensions' })
+    screen.getByRole('combobox', { name: 'Dimension' }).focus()
+    await user.keyboard('{ArrowDown}{ArrowDown}{Enter}')
+
+    const map = screen.getByRole('list', { name: 'Locations' })
+    expect(
+      within(map)
+        .getAllByRole('button')
+        .map((b) => b.getAttribute('aria-label')),
+    ).toEqual(['Earth (C-137)', 'Anatomy Park'])
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
+  })
+
+  it('When I click a planet, I see its type, dimension and residents, and can open a resident', async () => {
+    const user = userEvent.setup()
+    renderApp('/multiverse?dimension=Dimension+C-137')
+    await user.click(await screen.findByRole('button', { name: 'Earth (C-137)' }))
+
+    const dialog = screen.getByRole('dialog', { name: 'Earth (C-137)' })
+    expect(within(dialog).getByText('Planet')).toBeInTheDocument()
+    expect(within(dialog).getByText('Dimension C-137')).toBeInTheDocument()
+    expect(within(dialog).getByText('2')).toBeInTheDocument()
+    expect(await within(dialog).findByText('Rick Sanchez')).toBeInTheDocument()
+
+    await user.click(within(dialog).getByText('Morty Smith'))
+    const details = within(dialog).getByRole('article')
+    expect(within(details).getByText('Human')).toBeInTheDocument()
+
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('The locations load only once, even after I leave the page and come back', async () => {
+    const user = userEvent.setup()
+    renderApp('/multiverse')
+    await screen.findByRole('list', { name: 'Dimensions' })
+    expect(locationRequests()).toHaveLength(2)
+
+    await user.click(screen.getByRole('link', { name: 'About' }))
+    await user.click(screen.getByRole('link', { name: 'Multiverse' }))
+    await screen.findByRole('list', { name: 'Dimensions' })
+    expect(locationRequests()).toHaveLength(2)
   })
 })
