@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet } from 'react-router'
-import logo from '../assets/logo.jpg'
+import logo from '../assets/logo.png'
 
 // The parts every page shares: the logo and the menu.
 // <Outlet /> is where React Router puts the page for the current address.
@@ -13,8 +13,8 @@ function Layout() {
               className="logo"
               src={logo}
               alt="Rick and Morty Characters"
-              width="640"
-              height="640"
+              width="1200"
+              height="353"
             />
           </Link>
         </h1>

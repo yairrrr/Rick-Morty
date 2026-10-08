@@ -12,8 +12,16 @@ function makeCharacter(id: number, name: string, episodes = 1): Character {
     id,
     name,
     image: `${API}/avatar/${id}.jpeg`,
+    status: 'Alive',
     species: 'Human',
-    episode: Array.from({ length: episodes }, (_, i) => `ep${i + 1}`),
+    type: '',
+    gender: 'Male',
+    origin: { name: 'Earth (C-137)' },
+    location: { name: 'Citadel of Ricks' },
+    episode: Array.from(
+      { length: episodes },
+      (_, i) => `https://rickandmortyapi.com/api/episode/${i + 1}`,
+    ),
   }
 }
 
@@ -102,9 +110,7 @@ describe('PRD acceptance criteria', () => {
     )
     expect(within(details).getByText('Morty Smith')).toBeInTheDocument()
     expect(within(details).getByText('Human')).toBeInTheDocument()
-    expect(
-      within(details).getByText('Appears in 51 episodes'),
-    ).toBeInTheDocument()
+    expect(within(details).getByText('51 episodes')).toBeInTheDocument()
   })
 
   it('When I type "Rick" in the search box, I see only characters named Rick', async () => {
@@ -272,5 +278,75 @@ describe('New feature: Episodes and About pages', () => {
     renderApp('/no-such-page')
 
     expect(screen.getByText('Wrong dimension!')).toBeInTheDocument()
+  })
+})
+
+describe('New feature: character facts', () => {
+  beforeEach(() => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string) => fakeApi(url)),
+    )
+  })
+
+  it('When I click a character, I see its status, gender, origin, location and first episode', async () => {
+    const user = userEvent.setup()
+    renderApp()
+    await user.click(await screen.findByText('Rick Sanchez'))
+
+    const details = screen.getByRole('article')
+    expect(within(details).getByText('Alive')).toBeInTheDocument()
+    expect(within(details).getByText('Male')).toBeInTheDocument()
+    expect(within(details).getByText('Earth (C-137)')).toBeInTheDocument()
+    expect(within(details).getByText('Citadel of Ricks')).toBeInTheDocument()
+    expect(within(details).getByText('Episode 1')).toBeInTheDocument()
+  })
+})
+
+describe('New feature: favorites', () => {
+  beforeEach(() => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string) => fakeApi(url)),
+    )
+  })
+
+  it('When I tap the heart on a character, I see it under "Favorites"', async () => {
+    const user = userEvent.setup()
+    renderApp()
+    await user.click(
+      await screen.findByRole('button', {
+        name: 'Add Morty Smith to favorites',
+      }),
+    )
+    await user.click(screen.getByRole('button', { name: 'Favorites (1)' }))
+
+    expect(cardNames()).toEqual(['Morty Smith'])
+  })
+
+  it('My favorites are still there after I reload the app', async () => {
+    const user = userEvent.setup()
+    const { unmount } = renderApp()
+    await user.click(
+      await screen.findByRole('button', {
+        name: 'Add Rick Sanchez to favorites',
+      }),
+    )
+    unmount()
+
+    renderApp()
+    expect(
+      await screen.findByRole('button', {
+        name: 'Remove Rick Sanchez from favorites',
+      }),
+    ).toBeInTheDocument()
+  })
+
+  it('With no favorites, I see how to add one', async () => {
+    const user = userEvent.setup()
+    renderApp()
+    await user.click(screen.getByRole('button', { name: 'Favorites (0)' }))
+
+    expect(screen.getByText(/No favorites yet/)).toBeInTheDocument()
   })
 })

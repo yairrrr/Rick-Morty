@@ -4,6 +4,8 @@ import { afterEach, vi } from 'vitest'
 
 afterEach(() => {
   cleanup()
+  // Favorites are saved here, so each test starts with none
+  localStorage.clear()
   vi.unstubAllGlobals()
 })
 

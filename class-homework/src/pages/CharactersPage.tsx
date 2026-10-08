@@ -3,6 +3,7 @@ import { fetchCharacters, firstPageUrl } from '../api'
 import CharacterDetails from '../components/CharacterDetails'
 import CharacterList from '../components/CharacterList'
 import CharacterVideo from '../components/CharacterVideo'
+import { useFavorites } from '../favorites'
 import type { Character } from '../types'
 
 function errorMessage(err: unknown) {
@@ -30,7 +31,13 @@ function CharactersPage() {
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(
     null,
   )
+  const [showFavorites, setShowFavorites] = useState(false)
+  const { favorites, isFavorite, toggleFavorite } = useFavorites()
   const searchName = query.trim()
+  // The search box also filters the favorites, without asking the API
+  const shownFavorites = favorites.filter((c) =>
+    c.name.toLowerCase().includes(searchName.toLowerCase()),
+  )
   // Lets a new search cancel a "Load more" that is still loading
   const loadMoreController = useRef<AbortController | null>(null)
   const detailsRef = useRef<HTMLElement>(null)
@@ -70,7 +77,8 @@ function CharactersPage() {
   }, [searchName])
 
   function handleSelect(id: number) {
-    setSelectedCharacter(characters.find((c) => c.id === id) ?? null)
+    const shown = showFavorites ? shownFavorites : characters
+    setSelectedCharacter(shown.find((c) => c.id === id) ?? null)
     // Bring the details and the video into view: on phones they sit below
     // the list, on laptops the panel is still below the logo until it sticks
     const panel = detailsRef.current
@@ -103,7 +111,24 @@ function CharactersPage() {
   }
 
   let listContent
-  if (isLoading) {
+  if (showFavorites) {
+    listContent =
+      shownFavorites.length === 0 ? (
+        <p className="status">
+          {favorites.length === 0
+            ? 'No favorites yet. Tap the heart on a character to add it'
+            : 'No favorites found'}
+        </p>
+      ) : (
+        <CharacterList
+          characters={shownFavorites}
+          selectedId={selectedCharacter?.id ?? null}
+          onSelect={handleSelect}
+          isFavorite={isFavorite}
+          onToggleFavorite={toggleFavorite}
+        />
+      )
+  } else if (isLoading) {
     listContent = <p className="status">Loading...</p>
   } else if (error) {
     listContent = (
@@ -121,6 +146,8 @@ function CharactersPage() {
           characters={characters}
           selectedId={selectedCharacter?.id ?? null}
           onSelect={handleSelect}
+          isFavorite={isFavorite}
+          onToggleFavorite={toggleFavorite}
         />
         {loadMoreError && (
           <p className="status status-error" role="alert">
@@ -152,10 +179,30 @@ function CharactersPage() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
+        <div className="list-tabs" role="group" aria-label="Which characters">
+          <button
+            type="button"
+            aria-pressed={!showFavorites}
+            onClick={() => setShowFavorites(false)}
+          >
+            All
+          </button>
+          <button
+            type="button"
+            aria-pressed={showFavorites}
+            onClick={() => setShowFavorites(true)}
+          >
+            Favorites ({favorites.length})
+          </button>
+        </div>
         {listContent}
       </section>
       <section className="details-panel" ref={detailsRef}>
-        <CharacterDetails character={selectedCharacter} />
+        <CharacterDetails
+          character={selectedCharacter}
+          isFavorite={selectedCharacter ? isFavorite(selectedCharacter.id) : false}
+          onToggleFavorite={toggleFavorite}
+        />
         {selectedCharacter && (
           <CharacterVideo
             key={selectedCharacter.id}

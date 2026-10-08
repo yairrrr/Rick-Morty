@@ -70,7 +70,7 @@ body::before {
 
 .logo-link {
   display: block;
-  border-radius: 22%;
+  border-radius: 16px;
 }
 
 .logo-link:focus-visible {
@@ -149,15 +149,12 @@ h1 {
 
 .logo {
   display: block;
-  width: min(62vw, 240px);
+  width: min(100%, 520px);
   height: auto;
-  /* The picture is cut to the logo's own rounded square, so the corners
-     follow its shape */
-  border-radius: 22%;
-  box-shadow:
-    0 0 0 2px var(--portal),
-    0 0 40px var(--portal-glow),
-    0 18px 40px rgba(0, 0, 0, 0.6);
+  /* The picture has a see-through background, so the glow follows
+     the letters and the characters instead of a box */
+  filter: drop-shadow(0 0 18px var(--portal-glow))
+    drop-shadow(0 12px 18px rgba(0, 0, 0, 0.6));
   animation: logo-float 6s ease-in-out infinite;
 }
 
@@ -481,39 +478,176 @@ h1 {
     0 0 18px var(--portal-glow);
 }
 
-/* Species and episodes as two badges */
-.character-details dl {
+/* Alive / Dead / Unknown */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-family: var(--font-title);
+  font-size: 18px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  background: rgba(154, 166, 191, 0.12);
+  border: 2px solid rgba(154, 166, 191, 0.4);
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.status-alive {
+  color: var(--portal-bright);
+  background: rgba(151, 206, 76, 0.12);
+  border-color: rgba(151, 206, 76, 0.5);
+}
+
+.status-dead {
+  color: var(--error);
+  background: rgba(255, 123, 123, 0.12);
+  border-color: rgba(255, 123, 123, 0.5);
+}
+
+/* The character's facts from the API, like a file card */
+.stats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
   width: 100%;
   margin: 0;
+  text-align: start;
 }
 
-.character-details dl > dt {
-  grid-row: 1;
-  margin: 0;
-  padding: 10px 12px 0;
+.stat {
+  min-width: 0;
+  padding: 8px 12px 10px;
+  background: rgba(68, 200, 228, 0.1);
+  border: 2px solid rgba(68, 200, 228, 0.35);
+  border-radius: 14px;
+}
+
+.stat-wide {
+  grid-column: 1 / -1;
+}
+
+.stat dt {
   font-family: var(--font-title);
-  font-size: 16px;
+  font-size: 14px;
   letter-spacing: 1px;
   color: var(--rick);
-  background: rgba(68, 200, 228, 0.1);
-  border: 2px solid rgba(68, 200, 228, 0.35);
-  border-bottom: none;
-  border-radius: 14px 14px 0 0;
 }
 
-.character-details dl > dd {
-  grid-row: 2;
-  margin: -10px 0 0;
-  padding: 2px 12px 12px;
+.stat dd {
+  margin: 0;
   font-weight: 600;
   color: #fff;
-  background: rgba(68, 200, 228, 0.1);
-  border: 2px solid rgba(68, 200, 228, 0.35);
-  border-top: none;
-  border-radius: 0 0 14px 14px;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Favorites ---------- */
+
+.list-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.list-tabs button {
+  padding: 6px 18px;
+  background: var(--glass-strong);
+  color: var(--text);
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  font-family: var(--font-title);
+  font-size: 18px;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.list-tabs button[aria-pressed='true'] {
+  color: #10220a;
+  background: linear-gradient(180deg, var(--portal-bright), var(--portal));
+  border-color: var(--portal-bright);
+  box-shadow: 0 0 16px var(--portal-glow);
+}
+
+.list-tabs button:focus-visible {
+  outline: 3px solid var(--rick);
+  outline-offset: 2px;
+}
+
+.character-item {
+  position: relative;
+}
+
+.favorite-button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: rgba(10, 14, 30, 0.8);
+  border: 2px solid var(--line);
+  border-radius: 50%;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition:
+    transform 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+}
+
+.favorite-button svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.favorite-button:hover {
+  color: #ff5d8f;
+  transform: scale(1.1);
+}
+
+.favorite-button[aria-pressed='true'] {
+  color: #ff5d8f;
+  border-color: #ff5d8f;
+  box-shadow: 0 0 14px rgba(255, 93, 143, 0.55);
+}
+
+.favorite-button[aria-pressed='true'] svg {
+  fill: currentColor;
+}
+
+.favorite-button:focus-visible {
+  outline: 3px solid var(--rick);
+  outline-offset: 2px;
+}
+
+/* On the corner of the card picture */
+.favorite-on-card {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+.details-image {
+  position: relative;
+}
+
+.favorite-on-details {
+  position: absolute;
+  right: 4%;
+  bottom: 4%;
+  width: 46px;
+  height: 46px;
 }
 
 /* ---------- YouTube video under the details ---------- */
@@ -974,7 +1108,7 @@ a.load-more {
 
 @media (min-width: 1200px) {
   .logo {
-    width: 320px;
+    width: 640px;
   }
 
   .character-list {
