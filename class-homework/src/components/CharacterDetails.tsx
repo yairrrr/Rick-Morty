@@ -6,14 +6,21 @@ type Props = {
 
 function CharacterDetails({ character }: Props) {
   if (!character) {
-    return <p className="details-empty">Pick a character to see details</p>
+    return (
+      <div className="details-empty">
+        <span className="portal" aria-hidden="true" />
+        <p>Pick a character to see details</p>
+      </div>
+    )
   }
 
   const episodeCount = character.episode.length
 
   return (
     <article className="character-details">
-      <img src={character.image} alt={character.name} width="300" height="300" />
+      <div className="details-image">
+        <img src={character.image} alt={character.name} width="300" height="300" />
+      </div>
       <h2>{character.name}</h2>
       <dl>
         <dt>Species</dt>

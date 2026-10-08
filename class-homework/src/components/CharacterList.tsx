@@ -20,11 +20,11 @@ function CharacterList({ characters, selectedId, onSelect }: Props) {
             <img
               src={character.image}
               alt=""
-              width="56"
-              height="56"
+              width="300"
+              height="300"
               loading="lazy"
             />
-            <span>{character.name}</span>
+            <span className="character-name">{character.name}</span>
           </button>
         </li>
       ))}
