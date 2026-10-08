@@ -185,7 +185,7 @@ function MultiversePage() {
     // Step 2: the planets of the dimension (or of the search)
     content = (
       // A new key replays the warp animation on every jump
-      <div className="warp" key={dimension ?? 'search'}>
+      <div className="warp" key={`warp-${dimension ?? 'search'}`}>
         <div className="sector-heading">
           {dimension && (
             <button
@@ -229,7 +229,7 @@ function MultiversePage() {
       <SpaceBackdrop />
       {/* Stars rush past on every jump to another dimension */}
       <span
-        key={dimension ?? 'home'}
+        key={`hyperspace-${dimension ?? 'home'}`}
         className="hyperspace"
         aria-hidden="true"
       />

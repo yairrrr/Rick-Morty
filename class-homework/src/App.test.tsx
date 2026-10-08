@@ -297,6 +297,25 @@ describe('New feature: favorites', () => {
     ).toBeInTheDocument()
   })
 
+  it('Broken favorites saved in the browser do not break the app', async () => {
+    localStorage.setItem(
+      'favorite-characters',
+      JSON.stringify([{ id: 1, name: 'Fake' }, null, allPage1[1]]),
+    )
+    const user = userEvent.setup()
+    renderApp()
+    await user.click(
+      await screen.findByRole('button', { name: 'Favorites (1)' }),
+    )
+    expect(cardNames()).toEqual(['Morty Smith'])
+
+    localStorage.setItem('favorite-characters', 'null')
+    renderApp()
+    expect(
+      await screen.findByRole('button', { name: 'Favorites (0)' }),
+    ).toBeInTheDocument()
+  })
+
   it('With no favorites, I see how to add one', async () => {
     const user = userEvent.setup()
     renderApp()
