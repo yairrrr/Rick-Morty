@@ -86,3 +86,8 @@ Done when: Clicking a character shows no video, nothing in the code mentions You
 Make the Multiverse look like the show: every dimension is a glowing bubble with a world inside and every location a planet in the show's style, all packed inside one big slowly turning sphere. The ball under the mouse grows a little, its neighbours make room, and it all moves smoothly. Use the icon in the logo folder for the browser tab.
 
 Done when: I see one round sphere with bubbles of different sizes and colours, the one under the mouse grows a little and smoothly, the planets look like the show, the tab shows the new icon, and all tests pass.
+
+## Task 18: Unit tests in Vitest UI
+Add unit tests for the app's own logic (the search address, reading the API answers, the dimension names, the episode codes and summaries, the bubble sizes and places). Install `@vitest/ui` and add a `test:ui` script so the tests can run in the browser.
+
+Done when: `npm test` passes with at least 5 unit tests, and `npm run test:ui` opens Vitest UI in the browser with all tests green.

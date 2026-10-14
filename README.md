@@ -43,7 +43,8 @@ Then open the address shown in the terminal (usually http://localhost:5173).
 | Command | What it does |
 | --- | --- |
 | `npm run dev` | Runs the app locally |
-| `npm test` | Runs the tests (the PRD acceptance criteria) |
+| `npm test` | Runs the tests (the PRD acceptance criteria and the unit tests) |
+| `npm run test:ui` | Runs the tests in Vitest UI, in the browser |
 | `npm run build` | Builds the app for publishing |
 | `npm run lint` | Checks the code for common mistakes |
 
@@ -76,6 +77,7 @@ class-homework/src/
     SpaceBackdrop.tsx          Stars, nebulas and portals behind the Multiverse page
     Sphere.tsx                 The turning sphere with the bubbles or planets inside
   App.test.tsx                 Tests for the acceptance criteria
+  logic.test.ts                Unit tests for the app's logic
 ```
 
 When you publish the app, the host must answer every address with `index.html` (on Vercel and Netlify this is the usual setting for single-page apps). Otherwise refreshing `/about` gives the host's own 404 page.

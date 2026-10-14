@@ -141,3 +141,27 @@ I checked: (fill in, e.g. "Opened Dimension C-137 and Chair Dimension and the pl
 Prompt: Run tests on the app, and check that there are no security holes, code problems or exposed sensitive personal information.
 Agent did: Ran the tests, `tsc`, `oxlint`, the build and `npm audit` (0 vulnerable packages). Searched the files and the whole git history for API keys, tokens, passwords, `.env` files, local paths, phone numbers and the personal email: nothing secret, and the only `.env` file ever committed was the empty `.env.example`. Checked the pictures for hidden data (EXIF, GPS): none. Checked the code for unsafe HTML (`dangerouslySetInnerHTML`, `innerHTML`, `eval`): none; the TVMaze summaries are read as plain text and the one outside link has `rel="noreferrer"`. Opened every page in a real browser and read the console. Fixed two problems: (1) `favorites.ts` trusted whatever was saved in `localStorage`, so `null` or a half character there would crash the page; it now keeps only real characters with an `https://` picture. (2) The Multiverse page gave two of its parts the same React `key`, which showed an error in the console. Added a test for broken saved favorites: 22 of 22 pass, build and lint pass. Still public: the first commits show my personal Gmail address as the author (newer commits use the GitHub noreply address).
 I checked: (fill in, e.g. "Read the report and ran `npm test` myself.")
+## Question — which test tool
+Prompt: Did we write the tests with Vitest?
+Agent did: Checked `package.json`, `vite.config.ts` and `src/App.test.tsx`: yes, the tests run on Vitest (`npm test` runs `vitest run`) with jsdom and React Testing Library. No code changed.
+I checked: (fill in)
+
+## Task 18 — unit tests in Vitest UI
+Prompt: The homework asks for unit tests with Vitest: at least 5 tests that pass with npm test, on our own logic (for example the filtering, or processing the data from the API), run in Vitest UI in the browser: install @vitest/ui, add a test:ui script, then npm run test:ui. Make sure it is installed and I can run the tests this way.
+Agent did: `@vitest/ui` was not installed and there was no `test:ui` script, and all the tests rendered the whole app (no unit tests). Installed `@vitest/ui` 5.0.3 (the same version as Vitest) and added `"test:ui": "vitest --ui"`. Added `src/logic.test.ts` with 15 unit tests: `firstPageUrl` (search address, safe encoding), `fetchCharacters` (404 gives an empty list, 500 is an error), `dimensionName` (the three ways the API writes an unknown dimension), `episodeCode`, `summaryText` (removes HTML, never runs a hidden script), `sizeVariety`, `sphereWidth` and `packInSphere` (bubbles stay inside the sphere and don't overlap). 37 of 37 pass, `tsc` and lint pass; started `vitest --ui` and it served the UI. Added the command to the README and Task 18 to `tasks.md`.
+I checked: (fill in, e.g. "Ran npm run test:ui and saw all tests green in the browser.")
+
+## Task 18 (follow-up) — Vitest UI asks for a token
+Prompt: It asks me for an authentication token to run it in the browser.
+Agent did: Explained why: Vitest UI 5 protects the page with a secret token so other sites can't run code on the computer. The token is made on the first run (here, the agent's own check run), and later runs open the address without it, so the browser had no token yet. The fix is to open once the full `UI started at http://localhost:51204/__vitest__/?token=...` address printed in the terminal; the browser then keeps a cookie and won't ask again. No code changed.
+I checked: (fill in)
+
+## Task 18 (follow-up) — where is the token
+Prompt: Where is the token?
+Agent did: Found it in `~/Library/Application Support/vitest/.vitest-secret-token` (made on 7 October 2026 by an earlier Vitest run, not by the agent's check as said before). The full address to open once is `http://localhost:51204/__vitest__/?token=` followed by that token. No code changed.
+I checked: (fill in)
+
+## Task 18 (follow-up) — push command
+Prompt: Now write me the command to push to GitHub.
+Agent did: Checked `git status` (the unit tests, `@vitest/ui`, README, tasks.md and prompts.md are not committed yet; the token is in none of the files) and wrote the `git add`, `git commit` and `git push` commands for the user to run. Ran nothing.
+I checked: (fill in)
