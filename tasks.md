@@ -91,3 +91,8 @@ Done when: I see one round sphere with bubbles of different sizes and colours, t
 Add unit tests for the app's own logic (the search address, reading the API answers, the dimension names, the episode codes and summaries, the bubble sizes and places). Install `@vitest/ui` and add a `test:ui` script so the tests can run in the browser.
 
 Done when: `npm test` passes with at least 5 unit tests, and `npm run test:ui` opens Vitest UI in the browser with all tests green.
+
+## Task 19: GitHub Pages site
+Publish the app on GitHub Pages. A GitHub Actions workflow builds `class-homework` and deploys it on every push to `main`. The site works under `/Rick-Morty/`, and a page refresh on `/episodes` or `/multiverse` still opens the app.
+
+Done when: the workflow runs green in the Actions tab, the site opens at https://yairrrr.github.io/Rick-Morty/, and refreshing the Episodes and Multiverse pages still shows them.

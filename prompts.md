@@ -165,3 +165,78 @@ I checked: (fill in)
 Prompt: Now write me the command to push to GitHub.
 Agent did: Checked `git status` (the unit tests, `@vitest/ui`, README, tasks.md and prompts.md are not committed yet; the token is in none of the files) and wrote the `git add`, `git commit` and `git push` commands for the user to run. Ran nothing.
 I checked: (fill in)
+
+## Setup — reviewing the tests one by one
+Prompt: I want to go over the tests you wrote in the project. Go through them with me one by one and let's think together about which tests we want.
+Agent did: Read `src/logic.test.ts` (15 unit tests) and `src/App.test.tsx` (22 tests that render the whole app), gave an overview, and started the review with the first unit test (`firstPageUrl`), asking the user whether to keep, change or remove each one. No code changed yet.
+I checked: (fill in)
+
+## Setup — test review: test 1
+Prompt: 1 (keep the test "With no name, asks for all the characters" as it is).
+Agent did: Kept test 1 unchanged and moved on to test 2 (`firstPageUrl` with "Rick & Morty"). No code changed.
+I checked: (fill in)
+
+## Setup — test review: test 2
+Prompt: 1 (keep the test "Puts the name in the address safely, even with spaces and &" as it is).
+Agent did: Kept test 2 unchanged and moved on to test 3 (`fetchCharacters`, a 404 answer gives an empty list). No code changed.
+I checked: (fill in)
+
+## Setup — test review: test 3
+Prompt: 1 (keep the test "A search with no matches (404) gives an empty list, not an error" as it is).
+Agent did: Kept test 3 unchanged and moved on to test 4 (`fetchCharacters`, a 500 answer is reported as an error). No code changed.
+I checked: (fill in)
+
+## Setup — test review: test 4
+Prompt: 1 (keep the test "A server error (500) is reported as an error" as it is).
+Agent did: Kept test 4 unchanged and moved on to test 5 (`dimensionName` keeps a real dimension name). No code changed.
+I checked: (fill in)
+
+## Setup — test review: switching to components
+Prompt: I want us to go over our components one by one and understand together which tests we have on each one, what they do, and whether a new test is needed on the component or a change to an existing test.
+Agent did: Changed the plan from reviewing the unit tests (test 5 still pending) to reviewing the components one by one. Listed the components and pages, and mapped which tests cover each one. No code changed yet.
+I checked: (fill in)
+
+## Setup — component review: Layout
+Prompt: 3 (add no test for the Layout component for now).
+Agent did: Left Layout as it is, with no new test, and moved on to component 2 (CharacterList). No code changed.
+I checked: (fill in)
+
+## Setup — component review: CharacterList
+Prompt: 2 (make only the change to the existing test: check that the selected card is marked after a click).
+Agent did: Added to the test "When I click a character, I see its picture, name, species and episode count" in `App.test.tsx` an assertion that the card in the list has `aria-pressed="true"` after the click. No new test added. Ran that test on its own.
+I checked: (fill in)
+
+## Setup — component review: learning the code
+Prompt: I prefer to go over my components so I understand the code better.
+Agent did: Changed the review to explain each component's code (what it does, how it is used, where it is tested) and not only the tests. Started with FavoriteButton. No code changed.
+I checked: (fill in)
+
+## Setup — component review: FavoriteButton
+Prompt: Yes, if it is needed.
+Agent did: Added a test in `App.test.tsx` (favorites group): "When I tap the heart again, the character leaves Favorites". It taps the heart twice and checks that the button is back to "Add" (not pressed) and that the tab shows "Favorites (0)". Ran the favorites tests.
+I checked: (fill in)
+
+## Setup — component review: CharacterDetails
+Prompt: Let's continue.
+Agent did: Went over CharacterDetails: how it builds the stats list, its fallbacks for unknown values, and its tests in App.test.tsx. Listed the gaps and options. No code changed yet.
+I checked: (fill in)
+
+## Setup — component review: CharacterDetails decision
+Prompt: 2 (do not add any test for CharacterDetails for now).
+Agent did: Left CharacterDetails as it is, with no new test, and moved on to the next component. No code changed.
+I checked: (fill in)
+
+## Setup — component review: SpaceBackdrop
+Prompt: Do not add anything.
+Agent did: Left SpaceBackdrop as it is, with no new test, and moved on to the next component (Planet). No code changed.
+I checked: (fill in)
+
+## Task 18 (follow-up) — component review: Planet, planetKind tests
+Prompt: 1 (export planetKind and add tests for it in logic.test.ts).
+Agent did: Exported `planetKind` from `src/components/Planet.tsx` and added 5 tests to `src/logic.test.ts`: Earth, stations, rocks, microverses, and an unknown type that falls back to anomaly.
+I checked: (fill in, e.g. "Ran npm run test:ui and saw the planetKind tests green.")
+
+## Task 19 — GitHub Pages site
+Prompt: I want to make a GitHub Pages page for the project. Prepare it and explain what to do on GitHub itself.
+Agent did: Set the Vite base path to `/Rick-Morty/` for the GitHub Pages build (`class-homework/vite.config.ts`), set the router basename to match (`class-homework/src/main.tsx`), and added a GitHub Actions workflow at `.github/workflows/deploy.yml` that builds `class-homework` and publishes it on every push to `main`. Also copies `index.html` to `404.html` so refreshing `/episodes` works. Checked the production build and the tests (43 passing).
+I checked: (fill in)
