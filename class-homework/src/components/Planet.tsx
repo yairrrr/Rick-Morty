@@ -36,7 +36,7 @@ const ROCK_TYPES = [
   'Quasar',
 ]
 
-function planetKind(location: Location): Kind {
+export function planetKind(location: Location): Kind {
   if (location.name.startsWith('Earth')) return 'earth'
   if (STATION_TYPES.includes(location.type)) return 'station'
   if (ROCK_TYPES.includes(location.type)) return 'rock'

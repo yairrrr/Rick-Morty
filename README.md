@@ -4,6 +4,8 @@ A small React app for Rick and Morty fans: browse and search every character in 
 
 Built as a first-year web development project, using a master-detail layout: a list of characters on the left and a details panel on the right.
 
+**Open the app:** [https://yairrrr.github.io/Rick-Morty/](https://yairrrr.github.io/Rick-Morty/)
+
 ## Features
 
 - Shows the first 20 characters when the app opens, with a small picture and a name

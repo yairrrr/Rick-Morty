@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { fetchCharacters, firstPageUrl } from './api'
+import { planetKind } from './components/Planet'
 import { dimensionName, UNKNOWN_DIMENSION, type Location } from './locations'
 import { packInSphere, sizeVariety, sphereWidth } from './sphereLayout'
 import { episodeCode, summaryText, type Episode } from './tvmaze'
@@ -126,5 +127,38 @@ describe('packInSphere (placing the bubbles)', () => {
     expect(spot.x).toBeCloseTo(50)
     expect(spot.y).toBeCloseTo(50)
     expect(spot.size).toBeLessThanOrEqual(20)
+  })
+})
+
+describe('planetKind (which kind of picture a place gets)', () => {
+  const place = (name: string, type: string) => ({
+    id: 1,
+    name,
+    type,
+    dimension: 'unknown',
+    residents: [],
+  })
+
+  it('A place named Earth gets an Earth picture, whatever its type', () => {
+    expect(planetKind(place('Earth (C-137)', 'Planet'))).toBe('earth')
+    expect(planetKind(place('Earth (Replacement Dimension)', 'Planet'))).toBe('earth')
+  })
+
+  it('Stations and ships get a station picture', () => {
+    expect(planetKind(place('Citadel of Ricks', 'Space station'))).toBe('station')
+    expect(planetKind(place('Death Star', 'Death Star'))).toBe('station')
+  })
+
+  it('Planets and asteroids get a rock picture', () => {
+    expect(planetKind(place('Gazorpazorp', 'Planet'))).toBe('rock')
+    expect(planetKind(place('Purge Planet', 'Asteroid'))).toBe('rock')
+  })
+
+  it('Microverses and other strange places get an anomaly picture', () => {
+    expect(planetKind(place('Anatomy Park', 'Microverse'))).toBe('anomaly')
+  })
+
+  it('A type the app does not know yet falls back to anomaly', () => {
+    expect(planetKind(place('Some new place', 'Moon'))).toBe('anomaly')
   })
 })

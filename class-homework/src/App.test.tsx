@@ -104,6 +104,12 @@ describe('PRD acceptance criteria', () => {
     renderApp()
     await user.click(await screen.findByText('Morty Smith'))
 
+    // The card in the list is marked as the selected one
+    const card = within(screen.getByRole('list'))
+      .getByText('Morty Smith')
+      .closest('button')
+    expect(card).toHaveAttribute('aria-pressed', 'true')
+
     const details = screen.getByRole('article')
     expect(within(details).getByRole('img')).toHaveAttribute(
       'alt',
@@ -277,6 +283,24 @@ describe('New feature: favorites', () => {
     await user.click(screen.getByRole('button', { name: 'Favorites (1)' }))
 
     expect(cardNames()).toEqual(['Morty Smith'])
+  })
+
+  it('When I tap the heart again, the character leaves "Favorites"', async () => {
+    const user = userEvent.setup()
+    renderApp()
+    await user.click(
+      await screen.findByRole('button', {
+        name: 'Add Morty Smith to favorites',
+      }),
+    )
+    await user.click(
+      screen.getByRole('button', { name: 'Remove Morty Smith from favorites' }),
+    )
+
+    expect(
+      screen.getByRole('button', { name: 'Add Morty Smith to favorites' }),
+    ).toHaveAttribute('aria-pressed', 'false')
+    expect(screen.getByRole('button', { name: 'Favorites (0)' })).toBeInTheDocument()
   })
 
   it('My favorites are still there after I reload the app', async () => {

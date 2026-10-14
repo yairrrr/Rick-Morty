@@ -240,3 +240,8 @@ I checked: (fill in, e.g. "Ran npm run test:ui and saw the planetKind tests gree
 Prompt: I want to make a GitHub Pages page for the project. Prepare it and explain what to do on GitHub itself.
 Agent did: Set the Vite base path to `/Rick-Morty/` for the GitHub Pages build (`class-homework/vite.config.ts`), set the router basename to match (`class-homework/src/main.tsx`), and added a GitHub Actions workflow at `.github/workflows/deploy.yml` that builds `class-homework` and publishes it on every push to `main`. Also copies `index.html` to `404.html` so refreshing `/episodes` works. Checked the production build and the tests (43 passing).
 I checked: (fill in)
+
+## Task 19 (follow-up) — link to the live site in the README
+Prompt: Add a link to the app in the README, that is, to the GitHub Pages page.
+Agent did: Added a line under the intro in `README.md` with the link to https://yairrrr.github.io/Rick-Morty/.
+I checked: (fill in)
