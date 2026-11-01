@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter } from 'react-router'
+import { MemoryRouter, useLocation, useNavigate } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
 import { clearLocationsCache, type Location } from './locations'
@@ -149,6 +149,92 @@ describe('PRD acceptance criteria', () => {
 
     expect(await screen.findByText('No characters found')).toBeInTheDocument()
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+})
+
+function RouteControls() {
+  const location = useLocation()
+  const navigate = useNavigate()
+  return <>
+    <output data-testid="address">{location.pathname}</output>
+    <button onClick={() => navigate(-1)}>Back</button>
+    <button onClick={() => navigate(1)}>Forward</button>
+  </>
+}
+
+function renderCharacterRoute(path = '/') {
+  return render(
+    <MemoryRouter initialEntries={[path]}>
+      <RouteControls />
+      <App />
+    </MemoryRouter>,
+  )
+}
+
+describe('Character routes', () => {
+  beforeEach(() => {
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+      const match = new URL(url).pathname.match(/\/character\/(\d+)$/)
+      if (match) {
+        const character = [...allPage1, ...allPage2].find(c => c.id === Number(match[1]))
+        return character
+          ? new Response(JSON.stringify(character))
+          : new Response('{}', { status: 404 })
+      }
+      return fakeApi(url)
+    }))
+  })
+
+  it('Clicking characters updates the address and Back/Forward restores details', async () => {
+    const user = userEvent.setup()
+    renderCharacterRoute()
+    await user.click(await screen.findByText('Morty Smith'))
+    expect(screen.getByTestId('address')).toHaveTextContent('/characters/2')
+    await user.click(within(screen.getByRole('list')).getByText('Rick Sanchez'))
+    expect(screen.getByTestId('address')).toHaveTextContent('/characters/1')
+    await user.click(screen.getByRole('button', { name: 'Back' }))
+    expect(await screen.findByRole('article')).toHaveTextContent('Morty Smith')
+    await user.click(screen.getByRole('button', { name: 'Back' }))
+    expect(screen.getByTestId('address')).toHaveTextContent(/^\/$/)
+    expect(screen.getByText('Pick a character to see details')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Forward' }))
+    expect(await screen.findByRole('article')).toHaveTextContent('Morty Smith')
+  })
+
+  it('A direct link and a fresh mount load a character outside the first list page', async () => {
+    const first = renderCharacterRoute('/characters/40')
+    expect(await screen.findByRole('article')).toHaveTextContent('Character 40')
+    expect(fetch).toHaveBeenCalledWith(`${API}/40`, expect.objectContaining({ signal: expect.any(AbortSignal) }))
+    first.unmount()
+    renderCharacterRoute('/characters/40')
+    expect(await screen.findByRole('article')).toHaveTextContent('Character 40')
+  })
+
+  it('Navigation preserves search and favorites while selecting a character', async () => {
+    const user = userEvent.setup()
+    renderCharacterRoute()
+    await user.click(await screen.findByRole('button', { name: 'Add Morty Smith to favorites' }))
+    await user.click(screen.getByRole('button', { name: 'Favorites (1)' }))
+    await user.type(screen.getByRole('searchbox'), 'Morty')
+    await user.click(within(screen.getByRole('list')).getByText('Morty Smith'))
+    expect(screen.getByRole('searchbox')).toHaveValue('Morty')
+    expect(screen.getByRole('button', { name: 'Favorites (1)' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('article')).toHaveTextContent('Morty Smith')
+    expect(screen.getByTestId('address')).toHaveTextContent('/characters/2')
+  })
+
+  it.each(['9999', 'invalid'])('An unknown character address (%s) shows an error', async (id) => {
+    renderCharacterRoute(`/characters/${id}`)
+    expect(await screen.findByRole('alert')).toHaveTextContent('Character not found')
+    expect(screen.queryByRole('article')).not.toBeInTheDocument()
+  })
+
+  it('A failed character request shows an error', async () => {
+    vi.stubGlobal('fetch', vi.fn(async (url: string) =>
+      url === `${API}/40` ? new Response('{}', { status: 500 }) : fakeApi(url),
+    ))
+    renderCharacterRoute('/characters/40')
+    expect(await screen.findByRole('alert')).toHaveTextContent('Request failed with status 500')
   })
 })
 

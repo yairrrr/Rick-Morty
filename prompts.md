@@ -245,3 +245,9 @@ I checked: (fill in)
 Prompt: Add a link to the app in the README, that is, to the GitHub Pages page.
 Agent did: Added a line under the intro in `README.md` with the link to https://yairrrr.github.io/Rick-Morty/.
 I checked: (fill in)
+
+## Task 20 — character detail routes
+Prompt: תקן את דרישת הניתוב החסרה בפרויקט: הוסף כתובת נפרדת לכל דמות, למשל `/characters/:id`, וקרא את המזהה באמצעות `useParams`. לחיצה על דמות תנווט לכתובת שלה, ופתיחת הקישור ישירות או רענון יציגו את פרטיה. שמור על העיצוב והיכולות הקיימים, ללא תוספות שאינן נחוצות לתיקון.
+הוסף את הפרומפט הזה במלואו ליומן הפרומפטים הקיים `prompts.md`, בלי למחוק תיעוד קודם. עדכן או הוסף בדיקות ממוקדות לניתוב החדש, והריץ את הבדיקות ואת בניית הפרויקט.
+Agent did: Added `/characters/:id`, read the id with `useParams`, and navigate on character selection. Direct links fetch the individual character, with loading and error states and cancellation on navigation. Kept the existing layout, search, favorites and pagination. Added focused route tests for selection, history, direct links/reload, preserving search/favorites, missing/invalid ids and failed requests. Validation: all 49 tests pass and the production build passes. Lint completes with two warnings (the existing Planet export warning and a synchronous state reset in the new route effect).
+I checked: (fill in)

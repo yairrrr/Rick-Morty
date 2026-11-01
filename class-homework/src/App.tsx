@@ -12,6 +12,7 @@ function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<CharactersPage />} />
+        <Route path="characters/:id" element={<CharactersPage />} />
         <Route path="episodes" element={<EpisodesPage />} />
         <Route path="multiverse" element={<MultiversePage />} />
         <Route path="about" element={<AboutPage />} />

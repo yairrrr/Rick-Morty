@@ -57,3 +57,11 @@ export async function fetchCharacters(
   }
   return response.json()
 }
+
+// A single character can be opened without first loading its list page.
+export async function fetchCharacter(id: string, signal?: AbortSignal): Promise<Character> {
+  const response = await fetchWithRetry(`${BASE_URL}/${id}`, signal)
+  if (response.status === 404) throw new Error('Character not found')
+  if (!response.ok) throw new Error(`Request failed with status ${response.status}`)
+  return response.json()
+}

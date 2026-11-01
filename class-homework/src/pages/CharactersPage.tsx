@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { fetchCharacters, firstPageUrl } from '../api'
+import { useNavigate, useParams } from 'react-router'
+import { fetchCharacter, fetchCharacters, firstPageUrl } from '../api'
 import CharacterDetails from '../components/CharacterDetails'
 import CharacterList from '../components/CharacterList'
 import { useFavorites } from '../favorites'
@@ -18,6 +19,9 @@ const STICKY_TOP_PX = 24
 const SEARCH_DELAY_MS = 300
 
 function CharactersPage() {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const [detailsError, setDetailsError] = useState<string | null>(null)
   const [query, setQuery] = useState('')
   const [characters, setCharacters] = useState<Character[]>([])
   const [nextUrl, setNextUrl] = useState<string | null>(null)
@@ -75,9 +79,34 @@ function CharactersPage() {
     }
   }, [searchName])
 
+  useEffect(() => {
+    setDetailsError(null)
+    if (!id) return
+    if (!/^[1-9]\d*$/.test(id)) {
+      setDetailsError('Character not found')
+      return
+    }
+    if (selectedCharacter?.id === Number(id)) return
+    const controller = new AbortController()
+    fetchCharacter(id, controller.signal)
+      .then((character) => {
+        if (!controller.signal.aborted) setSelectedCharacter(character)
+      })
+      .catch((err: unknown) => {
+        if (!controller.signal.aborted) setDetailsError(errorMessage(err))
+      })
+    return () => controller.abort()
+  }, [id, selectedCharacter?.id])
+
+  // Never show a previous character while another address is loading.
+  const currentCharacter = id && selectedCharacter?.id === Number(id)
+    ? selectedCharacter
+    : null
+
   function handleSelect(id: number) {
     const shown = showFavorites ? shownFavorites : characters
     setSelectedCharacter(shown.find((c) => c.id === id) ?? null)
+    navigate(`/characters/${id}`)
     // Bring the details into view: on phones they sit below
     // the list, on laptops the panel is still below the logo until it sticks
     const panel = detailsRef.current
@@ -121,7 +150,7 @@ function CharactersPage() {
       ) : (
         <CharacterList
           characters={shownFavorites}
-          selectedId={selectedCharacter?.id ?? null}
+          selectedId={currentCharacter?.id ?? null}
           onSelect={handleSelect}
           isFavorite={isFavorite}
           onToggleFavorite={toggleFavorite}
@@ -143,7 +172,7 @@ function CharactersPage() {
         <p className="result-count">{totalCount} characters found</p>
         <CharacterList
           characters={characters}
-          selectedId={selectedCharacter?.id ?? null}
+          selectedId={currentCharacter?.id ?? null}
           onSelect={handleSelect}
           isFavorite={isFavorite}
           onToggleFavorite={toggleFavorite}
@@ -197,11 +226,19 @@ function CharactersPage() {
         {listContent}
       </section>
       <section className="details-panel" ref={detailsRef}>
-        <CharacterDetails
-          character={selectedCharacter}
-          isFavorite={selectedCharacter ? isFavorite(selectedCharacter.id) : false}
-          onToggleFavorite={toggleFavorite}
-        />
+        {detailsError ? (
+          <p className="status status-error" role="alert">
+            Could not load character. {detailsError}
+          </p>
+        ) : id && !currentCharacter ? (
+          <p className="status">Loading character...</p>
+        ) : (
+          <CharacterDetails
+            character={currentCharacter}
+            isFavorite={currentCharacter ? isFavorite(currentCharacter.id) : false}
+            onToggleFavorite={toggleFavorite}
+          />
+        )}
       </section>
     </div>
   )
